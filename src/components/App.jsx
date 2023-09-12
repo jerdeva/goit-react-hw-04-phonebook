@@ -1,80 +1,70 @@
-import { Component } from "react";
+import {  useEffect, useState } from "react";
 import { FormPhonebook } from './FormPhonebook/FormPhonebook'
 import { nanoid } from 'nanoid';
 import { FilterForm } from './FilterForm/FilterForm';
 import { ContactsList } from './ContactsList/ContactsList'
-import React from 'react';
+// import React from 'react';
 
 
-
-export class App extends Component  {
-  state = {
-    contacts: [],
-    filter: ''
-  }
-
-
-    componentDidMount() {
-    const savedContacts = localStorage.getItem('saved-contacts');
+const localStInitialContacts = () => {
+        const savedContacts = localStorage.getItem('saved-contacts');
     if (savedContacts !== null) {
-      this.setState({
-        contacts: JSON.parse(savedContacts),
-      });
+      return  JSON.parse(savedContacts)
     }
-  }
+    return []
+}
 
-    componentDidUpdate(prevProps, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem('saved-contacts', JSON.stringify(this.state.contacts));
-    }
-  }
+
+export const App = () => {    
+    const [contacts, setContacts] = useState(localStInitialContacts);
+    const [filter, setFilter] = useState('');
+
+    useEffect(() => {
+        localStorage.setItem('saved-contacts', JSON.stringify(contacts))
+    }, [contacts]);
+
+
+    const addContact = newContact => {
+        const { name, number } = newContact;
+        const isExist = contacts.some(
+                contact => contact.name.toLowerCase() === name.toLowerCase()
+                || contact.number === number
+        );
   
-  addContact = newContact => {
-    const { name, number } = newContact;
-    const isExist = this.state.contacts.some(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
-        || contact.number === number
-    );
-  
-    if (isExist) {
-      alert(`${name} or ${number} is already in Phonebook.`);
-      return;
+        if (isExist) {
+            alert(`${newContact.name} or ${newContact.number} is already in Phonebook.`);
+            return;
+        }
+   
+        setContacts(prevState => ({
+            ...prevState.contacts,
+         id: nanoid(), ...newContact 
+    
+    }))
     }
-
-    this.setState(prevState => ({
-      contacts: [
-        ...prevState.contacts,
-        { id: nanoid(), ...newContact },
-      ],
-    }));
-  }
-
-  deleteContact = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
+    
+    const deleteContact = contactId => {
+        setContacts(prevState => prevState.filter(contact => contact.id !== contactId));
   };
+    
 
-  searchContact = filterContact => {
-    this.setState({
-      filter: filterContact,
-    })
+     const searchContact = newContactName => {
+    setFilter(newContactName);
   };
-
-  render() {
-    const { contacts, filter } = this.state;
-    const showList = contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    )
+    
+    const showList = contacts.filter(contact => {
+        contact.name.toLowerCase().includes(filter.toLowerCase())
+      
+    });
     
     return (
       <div>
         <h1>Phonebook</h1>
-        <FormPhonebook onAdd={this.addContact} />
+        <FormPhonebook onAdd={addContact} />
         <h2>Contacts:</h2>
-        <FilterForm filter={filter} onSearch={this.searchContact} />
-        <ContactsList filterList={showList} deleteContact={this.deleteContact} />
+        <FilterForm filter={filter} onSearch={searchContact} />
+        <ContactsList filterList={showList} deleteContact={deleteContact} />
       </div>
     );
-  }
+  
 };
