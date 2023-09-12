@@ -53,7 +53,7 @@ export const App = () => {
   };
     
     const showList = contacts.filter(contact => {
-        contact.name.toLowerCase().includes(filter.toLowerCase())
+       return contact.name.toLowerCase().includes(filter.toLowerCase())
       
     });
     
