@@ -16,7 +16,7 @@ const localStInitialContacts = () => {
 
 
 export const App = () => {    
-    const [contacts, setContacts] = useState(localStInitialContacts);
+    const [contacts, setContacts] = useState(localStInitialContacts());
     const [filter, setFilter] = useState('');
 
     useEffect(() => {
@@ -24,24 +24,22 @@ export const App = () => {
     }, [contacts]);
 
 
-    const addContact = newContact => {
-        const { name, number } = newContact;
-        const isExist = contacts.some(
-                contact => contact.name.toLowerCase() === name.toLowerCase()
-                || contact.number === number
-        );
+  const addContact = newContact => {
+    const { name, number } = newContact;
+    const isExist = contacts.some(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+        || contact.number === number
+    );
   
-        if (isExist) {
-            alert(`${newContact.name} or ${newContact.number} is already in Phonebook.`);
-            return;
-        }
-   
-        setContacts(prevState => ({
-            ...prevState.contacts,
-         id: nanoid(), ...newContact 
-    
-    }))
+    if (isExist) {
+      alert(`${newContact.name} or ${newContact.number} is already in Phonebook.`);
+      return;
     }
+   
+    setContacts(prevContacts => [
+      ...prevContacts,
+      { id: nanoid(), ...newContact }]);
+  };
     
     const deleteContact = contactId => {
         setContacts(prevState => prevState.filter(contact => contact.id !== contactId));
@@ -49,13 +47,13 @@ export const App = () => {
     
 
      const searchContact = newContactName => {
-    setFilter(newContactName);
+    setFilter(newContactName.currentTarget.value);
   };
     
-    const showList = contacts.filter(contact => {
-       return contact.name.toLowerCase().includes(filter.toLowerCase())
+    const showList = contacts.filter(contact => 
+        contact.name.toLowerCase().includes(filter.toLowerCase())
       
-    });
+    );
     
     return (
       <div>
