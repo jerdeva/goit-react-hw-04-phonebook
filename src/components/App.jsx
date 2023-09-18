@@ -46,8 +46,8 @@ export const App = () => {
   };
     
 
-     const searchContact = newContactName => {
-    setFilter(newContactName.currentTarget.value);
+     const searchContact = event => {
+    setFilter(event.currentTarget.value);
   };
     
     const showList = contacts.filter(contact => 

@@ -4,20 +4,19 @@ import LabelSt from './FormList.styled';
 
 
 
-export const FilterForm = ({filter, onSearch}) =>
-{
-    return (
-      <Wrapper>
-        <LabelSt htmlFor="filter">
-          Find contacts by name
-          <input
-            name="filter"
-            type="text"
-            placeholder="Enter name"
-            value={filter}
-            onChange={evt => onSearch(evt.target.value)}
-          />
-        </LabelSt>
-      </Wrapper>
-    );
-}
+export const FilterForm = ({ filter, onSearch }) => {
+  return (
+    <Wrapper>
+      <LabelSt htmlFor="filter">
+        Find contacts by name
+        <input
+          name="filter"
+          type="text"
+          placeholder="Enter name"
+          value={filter}
+          onChange={onSearch}
+        />
+      </LabelSt>
+    </Wrapper>
+  );
+};
